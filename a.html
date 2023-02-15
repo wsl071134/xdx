@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-		<title>Gift</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+		<title>小东西的礼物</title>
 		
 		<script >
 				//专门为了爱心图形的设置
@@ -11,23 +11,18 @@
 				'basic': {
 					//粒子数
 					'emission_rate': 20,
-
 					//活的越久跑得越远
 					'min_life': 4,
 					'life_range': 5,
-
 					//喷射角度
 					'min_angle': 0,
 					'angle_range': 360,
-
 					//粒子初速度
 					'min_speed': 1,
 					'speed_range': 2,
-
 					//粒子大小
 					'min_size': 4,
 					'size_range': 3,
-
 					//粒子颜色
 					'colour': 'hua.png'
 				},
@@ -55,8 +50,6 @@
 				[254,252,248,1]
 				
 				]
-
-
 			};
 			
 		//爬升阶段的烟花设置
@@ -64,23 +57,18 @@
 				'basic': {
 					//粒子数
 					'emission_rate': 200,
-
 					//活的越久跑得越远
 					'min_life': 0.1,
 					'life_range': 0.5,
-
 					//喷射角度
 					'min_angle': -80,
 					'angle_range': -20,
-
 					//粒子初速度
 					'min_speed': 3,
 					'speed_range':5,
-
 					//粒子大小
 					'min_size': 2,
 					'size_range': 2,
-
 					//粒子颜色
 					'colour': 'red'
 				},
@@ -106,23 +94,18 @@
 				'basic': {
 					//粒子数
 					'emission_rate': 500,
-
 					//活的越久跑得越远
 					'min_life': 0.5,
 					'life_range': 1,
-
 					//喷射角度
 					'min_angle': 0,
 					'angle_range': 360,
-
 					//粒子初速度
 					'min_speed': 10,
 					'speed_range': 80,
-
 					//粒子大小
 					'min_size': 1,
 					'size_range': 3,
-
 					//粒子颜色
 					'colour': 'red'
 				},
@@ -150,11 +133,9 @@
 				[254,252,248,1]
 				
 				]
-
 			};
 			//粒子对象
 			var Particle = function(x, y, angle, speed, life, size, start_colour, colour_step) {
-
 				this.pos = {
 					x: x || 0,
 					y: y || 0
@@ -164,7 +145,6 @@
 				this.life = life || 1;
 				this.size = size || 2;
 				this.lived = 0;
-
 				var radians = angle * Math.PI / 180;
 				//向量 将速度转换成横坐标速度和纵坐标速度，简单的三角函数计算
 				this.vel = {
@@ -176,18 +156,14 @@
 			};
 			//发射器对象
 			var Emitter = function(x, y, settings, boom) {
-
 				//pos 定位喷头位置
 				this.pos = {
 					x: x,
 					y: y
 				};
-
 				this.settings = settings;
-
 				//发射器生成一个粒子的毫秒数,生成单个时间越短，单位时间生成越多粒子
 				this.emission_delay = 1000 / settings.basic.emission_rate;
-
 				//上一次更新的时间，本次更新时间减去上一次的，就是一个时间段,如果维护一个发射器重复使用，这个属性要每次重置
 				//注意：这个属性控制了粒子更新间隔，与时间相关，当间隔重复使用update方法的时候，此属性要同时更新
 				this.last_update = 0;
@@ -195,20 +171,16 @@
 				this.last_emission = 0;
 				//爆炸参数，0，不爆炸，1，可以爆炸，2，表示已经爆炸。2不可以手动传参，内部维护
 				this.boom = boom;
-
 				//	记录存活的粒子信息
 				this.particles = [];
-
 			};
 			//发射器添加新的方法，此方法负责维护和刷新粒子，包括位置改变，生存死亡，颜色变化
 			Emitter.prototype.update = function() {
-
 				if(!this.last_update) {
 					this.last_update = Date.now();
 					return;
 				}
 				var time = Date.now();
-
 				var dt = time - this.last_update;
 				//粒子生成器生成粒子的时间增长，但是会爆炸的粒子生成器时间自定义为1000
 				//this.last_emission += dt;
@@ -216,24 +188,18 @@
 					this.last_emission = 1000;
 				else
 					this.last_emission += dt;
-
 				this.last_update = time;
-
 				//	如果粒子生成粒子时间大于生成单个粒子所需要的时间才渲染粒子
 				if(this.last_emission > this.emission_delay && this.boom < 2) {
 					if(this.boom == 1)
 						this.boom = 2;
 					//粒子生成器的粒子生成粒子时间除以单个粒子生成时间，就得出粒子生成器一共要创造多少个粒子
 					var i = Math.floor(this.last_emission / this.emission_delay);
-
 					//粒子生成器用于生成粒子的时间，减去已经用去的生成粒子时间
 					this.last_emission -= i * this.emission_delay;
 					while(i--) {
-
 						var start_colour = this.settings.start_colours[Math.floor(this.settings.start_colours.length * Math.random())];
-
 						var end_colour = this.settings.end_colours[Math.floor(this.settings.end_colours.length * Math.random())];
-
 						var life = this.settings.basic.min_life + Math.random() * this.settings.basic.life_range;
 						//0,1,2,3紅綠藍透明度
 						var colour_step = [
@@ -242,7 +208,6 @@
 							(end_colour[2] - start_colour[2]) / life,
 							(end_colour[3] - start_colour[3]) / life
 						];
-
 						//在记录数组末尾加上新的粒子信息//这里粒子独立存活，后续坐标不依赖生成器
 						this.particles.push(
 							new Particle(
@@ -256,14 +221,10 @@
 								colour_step
 							)
 						);
-
 					}
 				}
-
 				dt /= 1000;
-
 				var i = this.particles.length;
-
 				while(i--) {
 					var particle = this.particles[i];
 					if(particle.dead) {
@@ -278,40 +239,29 @@
 						particle.dead = true;
 						continue;
 					}
-
 					//粒子加速度，水平模拟风力，垂直模拟重力
 					particle.vel.x += this.settings.gravity.gx * dt;
 					particle.vel.y += this.settings.gravity.gy * dt;
-
 					//更新粒子坐标，分为横竖坐标 
 					particle.pos.x += particle.vel.x * dt;
 					particle.pos.y += particle.vel.y * dt;
-
 					var ctx = document.getElementById("cando").getContext("2d");
-
 					//ctx.fillStyle = particle.colour;
-
 					/* now becomes... */
-
 					particle.colour[0] += particle.colour_step[0] * dt;
 					particle.colour[1] += particle.colour_step[1] * dt;
 					particle.colour[2] += particle.colour_step[2] * dt;
 					particle.colour[3] += particle.colour_step[3] * dt;
-
 					var cco = 'rgba(' +
 						Math.round(particle.colour[0]) + ',' +
 						Math.round(particle.colour[1]) + ',' +
 						Math.round(particle.colour[2]) + ',' +
 						particle.colour[3] + ')';
-
 					ctx.fillStyle = cco;
-
 					var x = particle.pos.x;
 					var y = particle.pos.y;
-
 					ctx.beginPath();
 					ctx.arc(x, y, particle.size, 0, Math.PI * 2);
-
 					/*var img = new Image();
 					img.src = this.settings.basic.colour;
 					ctx.drawImage(img, x, y, particle.size, particle.size);*/
@@ -345,7 +295,6 @@
 						this.em1.pos.y += this.speed*dt;
 						
 						this.em1.update();
-
 					} else {
 						//达到高度之后
 						//可以爆炸,或者爆炸效果没有完成,继续维护（update）this.em2的粒子
@@ -378,15 +327,13 @@
 							this.em1.pos.x = this.randomWidth;
 							this.em2.pos.x = this.randomWidth;
 						} 
-
 					}
-
 				};
 				
 			}
 			//全局变量，获得屏幕的高宽
-			var wx = screen.availWidth;
-			var hy = screen.availHeight;
+			var wx = screen.availWidth - 50;
+			var hy = screen.availHeight - 100;
 			//记得在onload事件里加上这个函数，这时控制开始的函数
 			function run(){
 				var ct = document.getElementById("cando");
@@ -423,7 +370,7 @@
 					lightContol++;
 						
 					ctx.fillStyle="rgba(232,136,11,"+light+")";
-					ctx.fillText("哥哥的小东西~！",wx/2-130,hy/2+10);
+					//ctx.fillText("哥哥的小东西~！",wx/2-130,hy/2+10);
 				},10);
 				
 			}		
@@ -442,32 +389,26 @@
 			function getHeartX(addt) {
 				var x;
 				var t = -3 + addt;
-
 				x = 16 * Math.pow(Math.sin(t), 3);
 				//增大心  
 				x = x * 12;
-
 				return x + wx / 2;
-
 			}
 			//获取爱心路径y坐标
 			function getHeartY(addt) {
 				var y;
 				var t = -3 + addt;
-
 				y = 13 * Math.cos(t) - 5 * Math.cos(t * 2) - 2 * Math.cos(t * 3) - Math.cos(t * 4);
-
 				y = y * 12;
 				//rr表示定位后的y坐标
 				var rr = y + hy / 2;
 				//返回翻转后的y坐标,在往下挪200px
 				return 2 * (hy / 2) - rr;
-
 			}
 			
 		</script>
 	</head>
 	<body onload="run()">
-		<canvas id="cando"> </canvas>
+		<canvas id="cando" width=100% height=100%> </canvas>
 	</body>
 </html>
